@@ -1,0 +1,37 @@
+# Reference: <https://postmarketos.org/devicepkg>
+pkgname=device-asus-z00l
+pkgdesc="Asus Zenfone 2 Laser (720p)"
+pkgver=0.1
+pkgrel=0
+url="https://postmarketos.org"
+license="MIT"
+arch="aarch64"
+options="!check !archcheck"
+depends="postmarketos-base linux-asus-z00l mkbootimg mesa-dri-swrast msm-fb-refresher"
+makedepends="devicepkg-dev"
+subpackages="$pkgname-nonfree-firmware:nonfree_firmware"
+source="
+	deviceinfo
+	90-touchscreen.rules
+"
+
+build() {
+	devicepkg_build $startdir $pkgname
+}
+
+package() {
+	devicepkg_package $startdir $pkgname
+        install -Dm644 "$srcdir"/90-touchscreen.rules "$pkgdir"/etc/udev/rules.d/90-touchscreen.rules
+}
+
+# I'm trying to copy Asus z00t's Firmware since they are very
+# similar and should be compatible.
+nonfree_firmware() {
+        pkgdesc="All non-free firmwares from a device image. Includes firmware for wifi, modem and camera among others."
+        depends="firmware-asus-z00t"
+        mkdir "$subpkgdir"
+}
+
+
+sha512sums="6f7c3b86b45bd24d640811f961da4bb4c417db0cf4b3b5c4f30b1798a798d2dc1da5e68f5f7857cd016e8bd02b77db10198f50776adf9a9aa46e399434e912e9  deviceinfo
+5bcf314aa8e77db9d9673a93886906bd15e8c3c57f8d0c4343977d2ce8d017af5608a3d13cd2cbacf155e3ecf632ccab6ff6f3b0c95eb4a2a3b35686a3c842db  90-touchscreen.rules"

@@ -1,0 +1,64 @@
+# Reference: <https://postmarketos.org/vendorkernel>
+# Kernel config based on: arch/arm64/configs/(CHANGEME!)
+
+pkgname=linux-asus-z00l
+pkgver=3.10.108
+pkgrel=2
+pkgdesc="Asus Zenfone 2 Laser (720p) kernel fork"
+arch="aarch64"
+_carch="arm64"
+_flavor="asus-z00l"
+url="https://kernel.org"
+license="GPL-2.0-only"
+options="!strip !check !tracedeps pmb:cross-native"
+makedepends="sed installkernel bash gmp-dev bc bison devicepkg-dev flex openssl-dev perl dtbtool linux-headers elfutils-dev gcc6"
+
+# Compiler: this kernel was only tested with GCC6. Feel free to make a merge
+# request if you find out that it is booting working with newer GCCs as
+# well. See <https://postmarketos.org/vendorkernel> for instructions.
+if [ "${CC:0:5}" != "gcc6-" ]; then
+        CC="gcc6-$CC"
+        HOSTCC="gcc6-gcc"
+        CROSS_COMPILE="gcc6-$CROSS_COMPILE"
+fi
+
+
+# Source
+_repository="android_kernel_asus_msm8916"
+#_commit="1a45c63742b8c3253a38c2ff97b672918c88d8df" Latest commit
+_commit="5fd66aa9219bf9aaa504aa3cb2dae7a3de5238f7" # Stable commit I guess
+_config="config-$_flavor.$arch"
+source="
+	$pkgname-$_commit.tar.gz::https://github.com/LineageOS/$_repository/archive/$_commit.tar.gz
+	$_config
+	compiler-gcc6.h
+        01_fix_gcc6_errors.patch
+        02_mdss_fb_refresh_rate.patch
+        05_dtb-fix.patch
+"
+builddir="$srcdir/$_repository-$_commit"
+_outdir="out"
+
+prepare() {
+	default_prepare
+	. downstreamkernel_prepare
+}
+
+build() {
+	unset LDFLAGS
+	make O="$_outdir" ARCH="$_carch" CC="${CC:-gcc}" \
+		KBUILD_BUILD_VERSION="$((pkgrel + 1 ))-postmarketOS"
+	# Generate master DTB (deviceinfo_bootimg_qcdt)
+        dtbTool -s 2048 -p "scripts/dtc/" -o "arch/arm64/boot/dt.img" "arch/arm/boot/"
+}
+
+package() {
+	downstreamkernel_package "$builddir" "$pkgdir" "$_carch" "$_flavor" "$_outdir"
+
+	# Master DTB (deviceinfo_bootimg_qcdt)
+        install -Dm644 "$builddir/arch/arm64/boot/dt.img" \
+                "$pkgdir/boot/dt.img"
+
+}
+
+sha512sums="(run 'pmbootstrap checksum linux-asus-z00l' to fill)"
