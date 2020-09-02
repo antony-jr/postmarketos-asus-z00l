@@ -69,7 +69,7 @@ Now Download [SuperSu.zip](https://download.chainfire.eu/1220/SuperSU/SR5-SuperS
 
 Now install this SuperSu.zip via TWRP Recovery -> Install. **Also wipe your cache after installing**. Usually this will be done with no issues. But if you run into problems and your phone won't boot recover with your backup. And refer about the problem in xda forums.
 
-Now reboot to your stock android. No your device should be rooted. And you should have Super Su App which can verify the root status.
+Now reboot to your stock android. Now your device should be rooted. And you should have Super Su App which can verify the root status.
 
 **IMPORTANT NOTE: Before continuing, connect your device with your pc and verify if it is available via adb**.
 
