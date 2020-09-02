@@ -44,7 +44,7 @@ Before you continue please download [this](https://github.com/antony-jr/postmark
 Also download TWRP for this device from [here](https://twrp.me/asus/asuszenfone2laser720p.html).
 
 **IMPORTANT NOTE: After executing the following commands below, You have to hold your power button
- and volume down key soon after reboot. Only press it until you see your asus logo. If you miss this and your phone boots normally then you have to repeat this entire process and also execute the download below commands once again.**
+ and volume down key soon after reboot. Only press it until you see your asus logo. If you miss this and your phone boots normally then you have to repeat this entire process and also execute the down below commands once again.**
 
 Now execute the following command,
 
