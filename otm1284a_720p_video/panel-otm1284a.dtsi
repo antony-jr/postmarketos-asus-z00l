@@ -1,0 +1,20 @@
+&dsi0 {
+	panel@0 {
+		compatible = "mdss,otm1284a";
+		reg = <0>;
+
+		backlight = <&backlight>;
+		reset-gpios = <&msmgpio XY GPIO_ACTIVE_LOW>;
+
+		port {
+			panel_in: endpoint {
+				remote-endpoint = <&dsi0_out>;
+			};
+		};
+	};
+};
+
+&dsi0_out {
+	data-lanes = <0 1 2 3>;
+	remote-endpoint = <&panel_in>;
+};
