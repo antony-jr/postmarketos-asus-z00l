@@ -26,10 +26,36 @@
 	};
 };
 
+&pronto {
+	status = "okay";
+};
+
+
+&dsi0 {
+        panel@0 {
+                compatible = "mdss,otm1284a";
+                reg = <0>;
+
+                ///// backlight = <&backlight>;
+                reset-gpios = <&msmgpio 3 GPIO_ACTIVE_LOW>;
+
+                port {
+                        panel_in: endpoint {
+                                remote-endpoint = <&dsi0_out>;
+                        };
+                };
+        };
+};
+
+&dsi0_out {
+        data-lanes = <0 1 2 3>;
+        remote-endpoint = <&panel_in>;
+};
 
 &blsp1_uart2 {
 	status = "okay";
 };
+
 
 /*
 &blsp_i2c1 {
