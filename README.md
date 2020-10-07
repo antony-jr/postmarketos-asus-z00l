@@ -1,6 +1,19 @@
 # postmarketos-asus-z00l [WIP]
 Configuration files for compiling postmarketSO in Asus Zenfone 2 Laser. Eventually a mainline.
 
+# A Note on using Wifi in Mainline
+
+You have to create symbolic link ```/lib/firmware/wlan/prima/WCNSS_qcom_wlan_nv.bin``` pointing to the file ```/lib/firmware/wlan/prima/WCNSS_qcom_wlan_nv_ze550kl.bin``` or the one which suits your model.
+
+Also execute the down below command.
+
+```
+ $ sudo -s # Needs super user.
+ $ echo 1 > /dev/wcnss_wlan
+ $ exit
+ $ ifconfig # Now you should see wlan0, it might take some time to show up.
+```
+
 # Unlocking Bootloader in 2020
 
 Since Asus dropped support for this model. The official unlocking will not work at all.
