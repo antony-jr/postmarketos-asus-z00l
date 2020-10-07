@@ -24,7 +24,7 @@ package() {
 # similar and should be compatible.
 nonfree_firmware() {
         pkgdesc="All non-free firmwares from a device image. Includes firmware for wifi, modem and camera among others."
-        depends="firmware-asus-z00t"
+        depends="firmware-asus-z00l"
         mkdir "$subpkgdir"
 }
 
