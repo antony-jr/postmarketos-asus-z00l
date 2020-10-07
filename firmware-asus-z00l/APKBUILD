@@ -41,6 +41,14 @@ package() {
 			"$pkgdir/lib/firmware/wlan/prima/$f"
 	done
 
+
+	# prima
+	# Copy the WCNSS_qcom_wlan_nv_ze550kl.bin as WCNSS_qcom_wlan_nv.bin
+	install -Dm644 \
+		"$_dir/etc-firmware/wlan/prima/WCNSS_qcom_wlan_nv_ze550kl.bin" \
+		"$pkgdir/lib/firmware/wlan/prima/WCNSS_qcom_wlan_nv.bin"
+
+
 	# qualcomm
 	_files="
 		cmnlib.b00
