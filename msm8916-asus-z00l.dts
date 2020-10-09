@@ -13,7 +13,7 @@
 
 / {
  	model = "Asus Zenfone 2 Laser";
- 	compatible = "asus,z00l", "qcom,msm8916"; // FIXME
+ 	compatible = "asus,z00l", "qcom,msm8916";
 
 	aliases {
 		serial0 = &blsp1_uart2;
@@ -40,15 +40,6 @@
 		};
 	};
 
-	backlight: backlight {
-                compatible = "pwm-backlight";
-                pwms = <&pm8916_pwm 0 100000>;
-
-                brightness-levels = <0 255>;
-                num-interpolated-steps = <255>;
-                default-brightness-level = <255>;
-        };
-
 	usb_id: usb-id {
 		compatible = "linux,extcon-usb-gpio";
 		id-gpios = <&msmgpio 110 GPIO_ACTIVE_HIGH>;
@@ -57,8 +48,41 @@
 	};
 };
 
-&pronto {
+&blsp1_uart2 {
 	status = "okay";
+};
+
+
+&blsp_i2c2 {
+        status = "okay";
+
+	rmi4@20 {
+		compatible = "syna,rmi4-i2c";
+		reg = <0x20>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		interrupt-parent = <&msmgpio>;
+		interrupts = <13 IRQ_TYPE_EDGE_FALLING>;
+
+		vdd-supply = <&pm8916_l16>;
+		vio-supply = <&pm8916_l6>;
+
+		pinctrl-names = "default";
+		pinctrl-0 = <&ts_int_default>;
+
+		syna,startup-delay-ms = <100>;
+
+		rmi4-f01@1 {
+			reg = <1>;
+			syna,nosleep-mode = <1>; // Allow sleeping
+		};
+
+		rmi4-f11@11 {
+			reg = <11>;
+			syna,sensor-type = <1>; // Touchscreen
+		};
+	};
 };
 
 
@@ -70,11 +94,9 @@
                 compatible = "mdss,otm1284a";
                 reg = <0>;
 
-                backlight = <&backlight>;
-               	power-supply = <&pm8916_l17>;
 		reset-gpios = <&msmgpio 3 GPIO_ACTIVE_LOW>;
-
-                port {
+                
+		port {
                         panel_in: endpoint {
                                 remote-endpoint = <&dsi0_out>;
                         };
@@ -87,96 +109,17 @@
         remote-endpoint = <&panel_in>;
 };
 
-&blsp1_uart2 {
-	status = "okay";
-};
-
-
-&blsp_i2c2 {
+&lpass {
         status = "okay";
-
-        rmi4@20 {
-                compatible = "syna,rmi4-i2c";
-                reg = <0x20>;
-		#address-cells = <1>;
-                #size-cells = <0>;
-
-                interrupt-parent = <&msmgpio>;
-                interrupts = <13 IRQ_TYPE_EDGE_FALLING>;
-
-                vdd-supply = <&pm8916_l16>;
-                vio-supply = <&pm8916_l6>;
-
-                pinctrl-names = "default";
-                pinctrl-0 = <&ts_int_default>;
-
-                syna,startup-delay-ms = <100>;
-
-                rmi4-f01@1 {
-                        reg = <1>;
-                        syna,nosleep-mode = <1>; // Allow sleeping
-                };
-
-                rmi4-f11@11 {
-                        reg = <11>;
-                        syna,sensor-type = <1>; // Touchscreen
-                };
-        };
 };
 
-
-
-&usb {
+&pm8916_resin {
 	status = "okay";
-	extcon = <&usb_id>, <&usb_id>;
+	linux,code = <KEY_VOLUMEDOWN>;
 };
 
-&usb_hs_phy {
-	extcon = <&usb_id>;
-};
-
-&msmgpio {
-	ts_int_default: ts-int-default {
-		pins = "gpio13";
-		function = "gpio";
-
-		drive-strength = <2>;
-		bias-disable;
-	};
-	
-	gpio_keys_default: gpio-keys-default {
-		pins = "gpio107";
-		function = "gpio";
-
-		drive-strength = <2>;
-		bias-pull-up;
-	};
-
-	usb_id_default: usb-id-default {
-		pins = "gpio110";
-		function = "gpio";
-
-		drive-strength = <8>;
-		bias-pull-up;
-	};
-
-	mdss {
-		mdss_default: mdss-default {
-			pins = "gpio25";
-			function = "gpio";
-
-			drive-strength = <8>;
-			bias-disable;
-		};
-		mdss_sleep: mdss-sleep {
-			pins = "gpio25";
-			function = "gpio";
-
-			drive-strength = <2>;
-			bias-pull-down;
-		};
-	};
-
+&pronto {
+	status = "okay";
 };
 
 &sdhc_1 {
@@ -200,14 +143,6 @@
 	non-removable;
 };
 
-&pm8916_resin {
-	status = "okay";
-	linux,code = <KEY_VOLUMEDOWN>;
-};
-
-&lpass {
-        status = "okay";
-};
 
 &sound {
 	status = "okay";
@@ -247,6 +182,15 @@
 	};
 };
 
+
+&usb {
+	status = "okay";
+	extcon = <&usb_id>, <&usb_id>;
+};
+
+&usb_hs_phy {
+	extcon = <&usb_id>;
+};
 
 &smd_rpm_regulators {
 	vdd_l1_l2_l3-supply = <&pm8916_s3>;
@@ -351,4 +295,46 @@
 	};
 };
 
+&msmgpio {
+	ts_int_default: ts-int-default {
+		pins = "gpio13";
+		function = "gpio";
 
+		drive-strength = <2>;
+		bias-disable;
+	};
+	
+	gpio_keys_default: gpio-keys-default {
+		pins = "gpio107";
+		function = "gpio";
+
+		drive-strength = <2>;
+		bias-pull-up;
+	};
+
+	usb_id_default: usb-id-default {
+		pins = "gpio110";
+		function = "gpio";
+
+		drive-strength = <8>;
+		bias-pull-up;
+	};
+
+	mdss {
+		mdss_default: mdss-default {
+			pins = "gpio25";
+			function = "gpio";
+
+			drive-strength = <8>;
+			bias-disable;
+		};
+		mdss_sleep: mdss-sleep {
+			pins = "gpio25";
+			function = "gpio";
+
+			drive-strength = <2>;
+			bias-pull-down;
+		};
+	};
+
+};
