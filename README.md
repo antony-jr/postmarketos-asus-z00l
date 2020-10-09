@@ -1,3 +1,10 @@
+
+<p align="center">
+  <img src=".github/boot.jpg" height=auto width=auto alt="AppImage Updater">  <br>
+</p>
+
+
+
 # postmarketos-asus-z00l [WIP]
 Configuration files for compiling postmarketSO in Asus Zenfone 2 Laser. Eventually a mainline.
 
