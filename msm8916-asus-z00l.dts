@@ -21,7 +21,8 @@
 	chosen {
 		stdout-path = "serial0";
 	};
-	
+
+	/*	
 	gpio-keys {
 		compatible = "gpio-keys";
 
@@ -37,6 +38,7 @@
 			debounce-interval = <15>;
 		};
 	};
+	*/
 
 	usb_id: usb-id {
 		compatible = "linux,extcon-usb-gpio";
@@ -53,50 +55,25 @@
 
 &blsp_i2c5 {
         status = "okay";
-/*
-	focaltech@38 {
-		compatible = "focaltech,5x06";
+
+	touchscreen@38 {
+		compatible = "edt,edt-ft5306";
 		reg = <0x38>;
-		interrupt-parent = <&msmgpio>;
-		interrupts = <13 IRQ_TYPE_EDGE_FALLING>;
-		
-		reset-gpio = <&msmgpio 12 GPIO_ACTIVE_HIGH>;
-
-		vdd-supply = <&pm8916_l11>;
-		vcc_i2c-supply = <&pm8916_l6>;
-	
-		linux,keycodes = <KEY_BACK KEY_HOMEPAGE KEY_APPSELECT>;
-	
-	};
-*/
-
-/*
-	rmi4@20 {
-		compatible = "syna,rmi4-2c";
-		reg = <0x20>;
-		#address-cells = <1>;
-		#size-cells = <0>;
 
 		interrupt-parent = <&msmgpio>;
 		interrupts = <13 IRQ_TYPE_EDGE_FALLING>;
 
-		reset-gpio = <&msmgpio 12 GPIO_ACTIVE_LOW>;
-	
+		reset-gpios = <&msmgpio 12 GPIO_ACTIVE_LOW>;
+
+		vcc-supply = <&pm8916_l11>;
+		// TODO: iovcc-supply <&pm8916_l6>;
+
+		touchscreen-size-x = <720>;
+		touchscreen-size-y = <1280>;
+
 		pinctrl-names = "default";
-		pinctrl-0 = <&ts_int_reset_default>;
-		syna,startup-delay-ms = <10>;
-
-		rmi4-f01@1 {
-			reg = <0x1>;
-			syna,nosleep-mode = <1>; // Allow sleeping
-		};
-
-		rmi4-f12@12 {
-			reg = <0x12>;
-			syna,sensor-type = <1>; // Touchscreen
-		};
+		pinctrl-0 = <&touchscreen_default>;
 	};
-*/
 };
 
 
@@ -266,68 +243,22 @@
 };
 
 &msmgpio {
-       /* add pingrp for touchscreen */
-       ts_int_reset_default: ts-int-reset-default {
-		pins = "gpio12", "gpio13";
-		function = "gpio";
-
-		drive-strength = <2>;
-		bias-disable;
-	};
-
-/*
-	ts_int_active: ts_int_active {
-	       label = "ts_int_active";
-               pins = "gpio13";
-	       function = "gpio";
-	       num-grp-pins = <1>;
-
-	       drive-strength = <16>;
-               bias-pull-up;
-       };
-          
-       ts_int_suspend: ts_int_suspend {
-	       label = "ts_int_suspend";
-	       pins = "gpio13";
-	       function = "gpio";
-	       num-grp-pins = <1>;
-	       drive-strength = <2>;
-               bias-pull-down;
-       };
-
-       ts_reset_active: ts_reset_active {
-		label = "ts_reset_active";
-                pins = "gpio12";
-		function = "gpio";
-                drive-strength = <16>;
-                bias-pull-up;
-        };
-          
-        ts_reset_suspend: ts_reset_suspend {
-                label = "ts_reset_suspend";
-		pins = "gpio12";
-		function = "gpio";
-		num-grp-pins = <1>;
-		drive-strength = <2>;
-                bias-pull-down;
-        };
-           
-        ts_release: ts_release {
-		label = "ts_release";
-                pins = "gpio13", "gpio12";
-		num-grp-pins = <2>;
-		drive-strength = <2>;
-                bias-pull-down;
-        };
-*/	
-	gpio_keys_default: gpio-keys-default {
-		pins = "gpio107";
+	touchscreen_default: touchscreen-default {
+		pins = "gpio13";
 		function = "gpio";
 
 		drive-strength = <2>;
 		bias-pull-up;
-	};
 
+		reset {
+			pins = "gpio12";
+			function = "gpio";
+
+			drive-strength = <2>;
+			bias-disable;
+		};
+	};
+	
 	usb_id_default: usb-id-default {
 		pins = "gpio110";
 		function = "gpio";
