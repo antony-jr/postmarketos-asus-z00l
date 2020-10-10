@@ -122,7 +122,14 @@
                 compatible = "mdss,otm1284a";
                 reg = <0>;
 
-		reset-gpios = <&msmgpio 3 GPIO_ACTIVE_LOW>;
+		//reset-gpios = <&msmgpio 3 GPIO_ACTIVE_LOW>;
+	
+		vdd-supply = <&pm8916_l8>;		
+		
+		reset-gpios = <&msmgpio 25 GPIO_ACTIVE_LOW>;
+		backlight-gpios = <&msmgpio 21 GPIO_ACTIVE_HIGH>;
+
+		pinctrl-0 = <&lcd_bl_en_default>;
 
 		port {
                         panel_in: endpoint {
@@ -323,6 +330,13 @@
 };
 
 &msmgpio {
+	lcd_bl_en_default: lcd-bl-en-default {
+		pins = "gpio97";
+		function = "gpio";
+
+		drive-strength = <2>;
+		bias-disable;
+	};
 
 	gpio_keys_default: gpio-keys-default {
 		pins = "gpio107";
