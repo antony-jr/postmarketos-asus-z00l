@@ -3,7 +3,6 @@
 		compatible = "mdss,otm1284a";
 		reg = <0>;
 
-		backlight = <&backlight>;
 		reset-gpios = <&msmgpio XY GPIO_ACTIVE_LOW>;
 
 		port {
