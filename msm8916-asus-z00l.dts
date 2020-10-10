@@ -60,6 +60,36 @@
 };
 
 
+&blsp_i2c1 {
+	status = "okay";
+};
+
+&blsp_i2c2 {
+	status = "okay";
+
+	light-sensor@60 {
+		compatible = "capella,cm36283";
+		reg = <0x60>;
+		vdd-supply = <&pm8916_l8>;
+		vio-supply = <&pm8916_l6>;
+
+		interrupt-parent = <&msmgpio>;
+		interrupts = <113 IRQ_TYPE_EDGE_FALLING>;
+	};
+
+	gyroscope@68 {
+		compatible = "invn,mpu6515";
+		reg = <0x68>;
+
+		interrupt-parent = <&msmgpio>;
+		interrupts = <36 IRQ_TYPE_EDGE_RISING>;
+
+		vdd-supply = <&pm8916_l17>;
+		vddio-supply = <&pm8916_l6>;
+	};
+
+};
+
 &blsp_i2c5 {
         status = "okay";
 
@@ -146,17 +176,24 @@
 	status = "okay";
 
 	pinctrl-names = "default", "sleep";
-	pinctrl-0 = <&cdc_pdm_lines_act &headset_switch_supply_en
-		     &headset_switch_in>;
-	pinctrl-1 = <&cdc_pdm_lines_sus &headset_switch_supply_en
-		     &headset_switch_in>;
+	pinctrl-0 = <&cdc_pdm_lines_act>;
+	pinctrl-1 = <&cdc_pdm_lines_sus>;
 
 	model = "msm8916";
 	audio-routing =
-		"AMIC1", "MIC BIAS External",
-		"AMIC2", "MIC BIAS Internal2",
-		"AMIC3", "MIC BIAS External";
-
+    		"RX_BIAS", "MCLK",
+                "SPK_RX_BIAS", "MCLK",
+                "INT_LDO_H", "MCLK",
+                "MIC BIAS External", "Handset Mic",
+                "MIC BIAS Internal2", "Headset Mic",
+                "MIC BIAS External", "Secondary Mic",
+                "AMIC1", "MIC BIAS External",
+                "AMIC2", "MIC BIAS Internal2",
+                "AMIC3", "MIC BIAS External",
+                "DMIC1", "MIC BIAS Internal1",
+                "MIC BIAS Internal1", "Digital Mic1",
+                "DMIC2", "MIC BIAS Internal1",
+                "MIC BIAS Internal1", "Digital Mic2";
 	dai-link-primary {
 		link-name = "Primary MI2S";
 		cpu {
