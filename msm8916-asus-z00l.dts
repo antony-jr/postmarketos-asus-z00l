@@ -46,7 +46,7 @@
 			debounce-interval = <15>;
 		};
 	};
-
+	
 	usb_id: usb-id {
 		compatible = "linux,extcon-usb-gpio";
 		id-gpios = <&msmgpio 110 GPIO_ACTIVE_HIGH>;
@@ -122,14 +122,10 @@
                 compatible = "mdss,otm1284a";
                 reg = <0>;
 
-		//reset-gpios = <&msmgpio 3 GPIO_ACTIVE_LOW>;
-	
-		vdd-supply = <&pm8916_l8>;		
-		
 		reset-gpios = <&msmgpio 25 GPIO_ACTIVE_LOW>;
-		backlight-gpios = <&msmgpio 21 GPIO_ACTIVE_HIGH>;
+		////backlight-gpios = <&msmgpio 21 GPIO_ACTIVE_LOW>;
 
-		pinctrl-0 = <&lcd_bl_en_default>;
+		///pinctrl-0 = <&lcd_bl_en_default>;
 
 		port {
                         panel_in: endpoint {
@@ -174,8 +170,6 @@
 	pinctrl-0 = <&sdc2_clk_on &sdc2_cmd_on &sdc2_data_on>; 
 	pinctrl-1 = <&sdc2_clk_off &sdc2_cmd_off &sdc2_data_off>;
 
-	// FIXME: Pick one! See below and compare with downstream...
-	//cd-gpios = <&msmgpio 38 GPIO_ACTIVE_LOW>;
 	non-removable;
 };
 
@@ -330,6 +324,7 @@
 };
 
 &msmgpio {
+/*
 	lcd_bl_en_default: lcd-bl-en-default {
 		pins = "gpio97";
 		function = "gpio";
@@ -337,7 +332,7 @@
 		drive-strength = <2>;
 		bias-disable;
 	};
-
+*/	
 	gpio_keys_default: gpio-keys-default {
 		pins = "gpio107";
 		function = "gpio";
