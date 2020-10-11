@@ -10,7 +10,7 @@ options="!check !archcheck"
 depends="postmarketos-base mkbootimg linux-postmarketos-qcom-msm8916 soc-qcom-msm8916"
 makedepends="devicepkg-dev"
 subpackages="$pkgname-nonfree-firmware:nonfree_firmware"
-source="deviceinfo"
+source="deviceinfo modprobe.conf"
 
 build() {
 	devicepkg_build $startdir $pkgname
@@ -29,4 +29,5 @@ nonfree_firmware() {
 }
 
 
-sha512sums="0269c95f65ac7f84eb171b85367bb7e18317b1471eb72dd58deab3658f00834eab9b7252642a2037c7745fb4641360565edd2c2c07040b16a7236e24b65d15df  deviceinfo"
+sha512sums="0269c95f65ac7f84eb171b85367bb7e18317b1471eb72dd58deab3658f00834eab9b7252642a2037c7745fb4641360565edd2c2c07040b16a7236e24b65d15df  deviceinfo
+cc77db8e5dbf95d9f5fe4afe369fc86def1b3ca6351c8e457e7ed58e66353f2248e010d3118b7893620d1cb554ffa8769df8fb1d1e89f2033000de22336ab35f  modprobe.conf"
