@@ -8,6 +8,8 @@
 # postmarketos-asus-z00l [WIP]
 Configuration files for compiling postmarketSO in Asus Zenfone 2 Laser. Eventually a mainline.
 
+
+
 # Remove Powered by Android on Splash
 
 You simply have to flash the splash.img with fastboot from the stock fastboot.
@@ -15,9 +17,17 @@ You simply have to flash the splash.img with fastboot from the stock fastboot.
 ```
  $ # Reboot device into fastboot mode
  $ fastboot flash splash splash.img
- $ fastboot reboot # enjoy your postmarketOS logo in powered.
+ $ fastboot reboot # enjoy your postmarketOS logo.
 ```
 
+If you want to make one yourself, See https://forum.xda-developers.com/zenfone-2-laser/general/guide-how-to-change-boot-logo-splash-t3526217
+
+In linux you might want to start the script like this(instead of using the batch file),
+
+```
+ $ # Install wine 
+ $ wine bin/Python2.7/python2.7.exe bin/Asus_Zenfone_Selfie_Splash_Maker_Utility.py  
+```
 
 # A Note on using Wifi in Mainline
 
