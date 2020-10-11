@@ -8,6 +8,17 @@
 # postmarketos-asus-z00l [WIP]
 Configuration files for compiling postmarketSO in Asus Zenfone 2 Laser. Eventually a mainline.
 
+# Remove Powered by Android on Splash
+
+You simply have to flash the splash.img with fastboot from the stock fastboot.
+
+```
+ $ # Reboot device into fastboot mode
+ $ fastboot flash splash splash.img
+ $ fastboot reboot # enjoy your postmarketOS logo in powered.
+```
+
+
 # A Note on using Wifi in Mainline
 
 You have to create symbolic link ```/lib/firmware/wlan/prima/WCNSS_qcom_wlan_nv.bin``` pointing to the file ```/lib/firmware/wlan/prima/WCNSS_qcom_wlan_nv_ze550kl.bin``` or the one which suits your model.
