@@ -24,24 +24,21 @@ package() {
 
 modem() {
 	pkgdesc="ASUS Zenfone 2 Laser modem firmware"
-	cd "$srcdir/$_dir"
-	install -Dm644 mba.mbn -t "$subpkgdir/$_fwdir"
-	install -Dm644 modem.* -t "$subpkgdir/$_fwdir"
+	install -Dm644 "$srcdir/$_dir"/mba.mbn -t "$subpkgdir/$_fwdir"
+	install -Dm644 "$srcdir/$_dir"/modem.* -t "$subpkgdir/$_fwdir"
 }
 
 venus() {
 	pkgdesc="ASUS Zenfone 2 Laser video firmware"
-	cd "$srcdir/$_dir"
-	install -Dm644 venus.* -t "$subpkgdir/$_fwdir"/qcom/venus-1.8
+	install -Dm644 "$srcdir/$_dir"/venus.* \
+		-t "$subpkgdir/$_fwdir"/qcom/venus-1.8
 }
 
 wcnss() {
 	pkgdesc="ASUS Zenfone 2 Laser WiFi/BT firmware"
-	cd "$srcdir/$_dir"
-	install -Dm644 wcnss.* -t "$subpkgdir/$_fwdir"
-
-	cd "$srcdir/$_dir_etc"/wlan/prima
-	install -Dm644 WCNSS_qcom_wlan_nv_ze550kl.bin \
+	cd "$srcdir"
+	install -Dm644 "$_dir"/wcnss.* -t "$subpkgdir/$_fwdir"
+	install -Dm644 "$_dir_etc"/wlan/prima/WCNSS_qcom_wlan_nv_ze550kl.bin \
 		"$subpkgdir/$_fwdir"/wlan/prima/WCNSS_qcom_wlan_nv.bin
 }
 
