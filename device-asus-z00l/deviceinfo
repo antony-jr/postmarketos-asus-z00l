@@ -17,7 +17,7 @@ deviceinfo_keyboard="false"
 deviceinfo_external_storage="true"
 deviceinfo_screen_width="720"
 deviceinfo_screen_height="1280"
-deviceinfo_getty="ttyMSMO;115200"
+deviceinfo_getty="ttyMSM0;115200"
 
 # Bootloader related
 deviceinfo_flash_method="fastboot"
