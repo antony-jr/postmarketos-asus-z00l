@@ -2,8 +2,8 @@
 # Please use double quotes only. You can source this file in shell scripts.
 
 deviceinfo_format_version="0"
-deviceinfo_name="Asus Zenfone 2 Laser (720p)"
-deviceinfo_manufacturer="Asus"
+deviceinfo_name="ASUS Zenfone 2 Laser (720p)"
+deviceinfo_manufacturer="ASUS"
 deviceinfo_codename="asus-z00l"
 deviceinfo_year="2015"
 deviceinfo_dtb="qcom/msm8916-asus-z00l"
@@ -17,7 +17,7 @@ deviceinfo_keyboard="false"
 deviceinfo_external_storage="true"
 deviceinfo_screen_width="720"
 deviceinfo_screen_height="1280"
-deviceinfo_getty="ttyMSMO; 115200"
+deviceinfo_getty="ttyMSMO;115200"
 
 # Bootloader related
 deviceinfo_flash_method="fastboot"

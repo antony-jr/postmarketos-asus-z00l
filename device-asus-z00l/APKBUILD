@@ -1,16 +1,22 @@
 # Reference: <https://postmarketos.org/devicepkg>
+# Maintainer: Antony J.R. <antonyjr@pm.me>
 pkgname=device-asus-z00l
-pkgdesc="Asus Zenfone 2 Laser (720p)"
+pkgdesc="ASUS Zenfone 2 Laser (720p)"
 pkgver=1
 pkgrel=0
 url="https://postmarketos.org"
 license="MIT"
 arch="aarch64"
 options="!check !archcheck"
-depends="postmarketos-base mkbootimg linux-postmarketos-qcom-msm8916 soc-qcom-msm8916"
+depends="postmarketos-base mkbootimg soc-qcom-msm8916"
 makedepends="devicepkg-dev"
-subpackages="$pkgname-nonfree-firmware:nonfree_firmware"
 source="deviceinfo modprobe.conf"
+subpackages="
+	$pkgname-kernel-mainline:kernel_mainline
+	$pkgname-kernel-mainline-modem:kernel_mainline_modem
+	$pkgname-nonfree-firmware:nonfree_firmware
+	$pkgname-nonfree-firmware-modem:nonfree_firmware_modem
+"
 
 build() {
 	devicepkg_build $startdir $pkgname
@@ -20,14 +26,30 @@ package() {
 	devicepkg_package $startdir $pkgname
 }
 
-# I'm trying to copy Asus z00t's Firmware since they are very
-# similar and should be compatible.
-nonfree_firmware() {
-        pkgdesc="All non-free firmwares from a device image. Includes firmware for wifi, modem and camera among others."
-        depends="firmware-asus-z00l"
-        mkdir "$subpkgdir"
+kernel_mainline() {
+	pkgdesc="Close to mainline kernel (no charging, no modem, audio routed directly)"
+	depends="linux-postmarketos-qcom-msm8916"
+	devicepkg_subpackage_kernel $startdir $pkgname $subpkgname
 }
 
+kernel_mainline_modem() {
+	pkgdesc="Close to mainline kernel (no charging, non-free modem, audio routed through ADSP)"
+	depends="linux-postmarketos-qcom-msm8916 soc-qcom-msm8916-modem"
+	devicepkg_subpackage_kernel $startdir $pkgname $subpkgname
+}
+
+nonfree_firmware() {
+	pkgdesc="GPU/WiFi/BT/Video(/Modem) firmware"
+	depends="linux-firmware-qcom firmware-asus-z00l-venus firmware-asus-z00l-wcnss"
+	mkdir "$subpkgdir"
+}
+
+nonfree_firmware_modem() {
+	pkgdesc="Modem firmware"
+	depends="firmware-asus-z00l-modem"
+	install_if="$pkgname-nonfree-firmware $pkgname-kernel-mainline-modem"
+	mkdir "$subpkgdir"
+}
 
 sha512sums="d27c0f16500946d58390a71a73b0c390df2a62c231d55fe9225d8085b843e72a52ac15c47a07afbfc9d088ab6b18eb14e0bfb47ec8f6c86f1692a7a5029df1d1  deviceinfo
 cc77db8e5dbf95d9f5fe4afe369fc86def1b3ca6351c8e457e7ed58e66353f2248e010d3118b7893620d1cb554ffa8769df8fb1d1e89f2033000de22336ab35f  modprobe.conf"
