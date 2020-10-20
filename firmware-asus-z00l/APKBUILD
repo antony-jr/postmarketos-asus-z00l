@@ -42,7 +42,7 @@ wcnss() {
 
 	cd "$srcdir/$_dir_etc"/wlan/prima
 	install -Dm644 WCNSS_qcom_wlan_nv_ze550kl.bin \
-		-t "$subpkgdir/$_fwdir"/wlan/prima/WCNSS_qcom_wlan_nv.bin
+		"$subpkgdir/$_fwdir"/wlan/prima/WCNSS_qcom_wlan_nv.bin
 }
 
 sha512sums="176da0aa399eddb6b9ab582b12bc698af369397a19c28556c39a656b573a5d4b02effe11a97d2f4c81568df03bc7859d999eb5d196a842dde4940cee192b96b3  firmware-asus-z00l-d78364b2127e8187f79e271e94dde03f0f722432.tar.gz"
