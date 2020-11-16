@@ -3,7 +3,9 @@
 		compatible = "mdss,otm1284a";
 		reg = <0>;
 
+		power-supply = <&...>;
 		reset-gpios = <&msmgpio XY GPIO_ACTIVE_LOW>;
+		backlight-gpios = <&msmgpio XY GPIO_ACTIVE_HIGH>;
 
 		port {
 			panel_in: endpoint {

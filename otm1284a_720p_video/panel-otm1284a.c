@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: GPL-2.0-only
-// Copyright (c) 2020 FIXME
-// Generated with linux-mdss-dsi-panel-driver-generator from vendor device tree:
-//   Copyright (c) 2013, The Linux Foundation. All rights reserved. (FIXME)
 
 #include <linux/backlight.h>
 #include <linux/delay.h>
 #include <linux/gpio/consumer.h>
 #include <linux/module.h>
 #include <linux/of.h>
+#include <linux/regulator/consumer.h>
 
 #include <drm/drm_mipi_dsi.h>
 #include <drm/drm_modes.h>
@@ -16,7 +14,9 @@
 struct otm1284a {
 	struct drm_panel panel;
 	struct mipi_dsi_device *dsi;
+	struct regulator *supply;
 	struct gpio_desc *reset_gpio;
+	struct gpio_desc *backlight_gpio;
 	bool prepared;
 };
 
@@ -114,12 +114,19 @@ static int otm1284a_prepare(struct drm_panel *panel)
 	if (ctx->prepared)
 		return 0;
 
+	ret = regulator_enable(ctx->supply);
+	if (ret < 0) {
+		dev_err(dev, "Failed to enable regulator: %d\n", ret);
+		return ret;
+	}
+
 	otm1284a_reset(ctx);
 
 	ret = otm1284a_on(ctx);
 	if (ret < 0) {
 		dev_err(dev, "Failed to initialize panel: %d\n", ret);
 		gpiod_set_value_cansleep(ctx->reset_gpio, 1);
+		regulator_disable(ctx->supply);
 		return ret;
 	}
 
@@ -141,6 +148,7 @@ static int otm1284a_unprepare(struct drm_panel *panel)
 		dev_err(dev, "Failed to un-initialize panel: %d\n", ret);
 
 	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
+	regulator_disable(ctx->supply);
 
 	ctx->prepared = false;
 	return 0;
@@ -188,13 +196,11 @@ static const struct drm_panel_funcs otm1284a_panel_funcs = {
 static int otm1284a_bl_update_status(struct backlight_device *bl)
 {
 	struct mipi_dsi_device *dsi = bl_get_data(bl);
-	u16 brightness = bl->props.brightness;
+	struct otm1284a *ctx = mipi_dsi_get_drvdata(dsi);
+	u16 brightness = backlight_get_brightness(bl);
 	int ret;
 
-	if (bl->props.power != FB_BLANK_UNBLANK ||
-	    bl->props.fb_blank != FB_BLANK_UNBLANK ||
-	    bl->props.state & (BL_CORE_SUSPENDED | BL_CORE_FBBLANK))
-		brightness = 0;
+	gpiod_set_value_cansleep(ctx->backlight_gpio, !!brightness);
 
 	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
 
@@ -207,35 +213,15 @@ static int otm1284a_bl_update_status(struct backlight_device *bl)
 	return 0;
 }
 
-// TODO: Check if /sys/class/backlight/.../actual_brightness actually returns
-// correct values. If not, remove this function.
-static int otm1284a_bl_get_brightness(struct backlight_device *bl)
-{
-	struct mipi_dsi_device *dsi = bl_get_data(bl);
-	u16 brightness = bl->props.brightness;
-	int ret;
-
-	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
-
-	ret = mipi_dsi_dcs_get_display_brightness(dsi, &brightness);
-	if (ret < 0)
-		return ret;
-
-	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
-
-	return brightness & 0xff;
-}
-
 static const struct backlight_ops otm1284a_bl_ops = {
-	.update_status = otm1284a_bl_update_status,
-	.get_brightness = otm1284a_bl_get_brightness,
+	.update_status = otm1284a_bl_update_status
 };
 
 static struct backlight_device *
 otm1284a_create_backlight(struct mipi_dsi_device *dsi)
 {
 	struct device *dev = &dsi->dev;
-	struct backlight_properties props = {
+	const struct backlight_properties props = {
 		.type = BACKLIGHT_RAW,
 		.brightness = 255,
 		.max_brightness = 255,
@@ -255,10 +241,20 @@ static int otm1284a_probe(struct mipi_dsi_device *dsi)
 	if (!ctx)
 		return -ENOMEM;
 
+	ctx->supply = devm_regulator_get(dev, "power");
+	if (IS_ERR(ctx->supply))
+		return dev_err_probe(dev, PTR_ERR(ctx->supply),
+				     "Failed to get power regulator\n");
+
 	ctx->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
 	if (IS_ERR(ctx->reset_gpio))
 		return dev_err_probe(dev, PTR_ERR(ctx->reset_gpio),
 				     "Failed to get reset-gpios\n");
+
+	ctx->backlight_gpio = devm_gpiod_get(dev, "backlight", GPIOD_OUT_LOW);
+	if (IS_ERR(ctx->backlight_gpio))
+		return dev_err_probe(dev, PTR_ERR(ctx->backlight_gpio),
+				     "Failed to get backlight-gpios\n");
 
 	ctx->dsi = dsi;
 	mipi_dsi_set_drvdata(dsi, ctx);
@@ -277,11 +273,7 @@ static int otm1284a_probe(struct mipi_dsi_device *dsi)
 		return dev_err_probe(dev, PTR_ERR(ctx->panel.backlight),
 				     "Failed to create backlight\n");
 
-	ret = drm_panel_add(&ctx->panel);
-	if (ret < 0) {
-		dev_err(dev, "Failed to add panel: %d\n", ret);
-		return ret;
-	}
+	drm_panel_add(&ctx->panel);
 
 	ret = mipi_dsi_attach(dsi);
 	if (ret < 0) {
@@ -307,7 +299,7 @@ static int otm1284a_remove(struct mipi_dsi_device *dsi)
 }
 
 static const struct of_device_id otm1284a_of_match[] = {
-	{ .compatible = "mdss,otm1284a" }, // FIXME
+	{ .compatible = "asus,z00l-otm1284a" },
 	{ /* sentinel */ }
 };
 MODULE_DEVICE_TABLE(of, otm1284a_of_match);
@@ -322,6 +314,6 @@ static struct mipi_dsi_driver otm1284a_driver = {
 };
 module_mipi_dsi_driver(otm1284a_driver);
 
-MODULE_AUTHOR("linux-mdss-dsi-panel-driver-generator <fix@me>"); // FIXME
+MODULE_AUTHOR("Antony J.R <antonyjr@protonmail.com>");
 MODULE_DESCRIPTION("DRM driver for otm1284a 720p video mode dsi panel");
 MODULE_LICENSE("GPL v2");
