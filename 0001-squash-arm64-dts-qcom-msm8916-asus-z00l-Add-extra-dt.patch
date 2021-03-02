@@ -1,0 +1,54 @@
+From 2c3e6483582e5dee17eaaa188da0ab16dfcefc87 Mon Sep 17 00:00:00 2001
+From: "J.R. Divya Antony" <d.antony.jr@gmail.com>
+Date: Tue, 16 Feb 2021 18:59:39 +0530
+Subject: [PATCH] squash! arm64: dts: qcom: msm8916-asus-z00l: Add extra dts for Modem+QDSP6
+
+Signed-off-by: J.R. Divya Antony <d.antony.jr@gmail.com>
+---
+ .../boot/dts/qcom/msm8916-asus-z00l-modem.dts      |  2 +-
+ arch/arm64/boot/dts/qcom/msm8916-asus-z00l.dts     | 14 ++++++++++----
+ 2 files changed, 11 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/msm8916-asus-z00l-modem.dts b/arch/arm64/boot/dts/qcom/msm8916-asus-z00l-modem.dts
+index 281b657aa45d..e965e26db18a 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916-asus-z00l-modem.dts
++++ b/arch/arm64/boot/dts/qcom/msm8916-asus-z00l-modem.dts
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ #include "msm8916-asus-z00l.dts"
+-#include "msm8916-modem-please-test-memshare.dtsi"
++#include "msm8916-modem.dtsi"
+ 
+ &sound {
+ 	/delete-node/ dai-link-primary;
+diff --git a/arch/arm64/boot/dts/qcom/msm8916-asus-z00l.dts b/arch/arm64/boot/dts/qcom/msm8916-asus-z00l.dts
+index 4ae9a86bdc11..f7fc431af0ea 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916-asus-z00l.dts
++++ b/arch/arm64/boot/dts/qcom/msm8916-asus-z00l.dts
+@@ -69,13 +69,19 @@ mpss_mem: mpss@86800000 {
+ 			no-map;
+ 		};
+ 
+-		wcnss_mem: wcnss@8bd00000 {
+-			reg = <0x0 0x8bd00000 0x0 0x600000>;
++		gps_mem: gps@8bd00000 {
++			status = "disabled";
++			reg = <0x0 0x8bd00000 0x0 0x200000>;
++			no-map;
++		};
++
++		wcnss_mem: wcnss@8bf00000 {
++			reg = <0x0 0x8bf00000 0x0 0x600000>;
+ 			no-map;
+ 		};
+ 
+-		venus_mem: venus@8c300000 {
+-			reg = <0x0 0x8c300000 0x0 0x600000>;
++		venus_mem: venus@8c500000 {
++			reg = <0x0 0x8c500000 0x0 0x600000>;
+ 			no-map;
+ 		};
+ 	};
+-- 
+2.30.0
+
