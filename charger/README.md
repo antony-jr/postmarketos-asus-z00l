@@ -5,7 +5,7 @@ The driver used by ASUS is not found in the android common kernels or any downst
 
 # Device Tree
 
-[**msm-pm8916.dtsi**]()
+[**msm-pm8916.dtsi**](https://github.com/antony-jr/postmarketos-asus-z00l/blob/master/charger/msm-pm8916.dtsi)
 
 ```
 &spmi_bus {
@@ -222,7 +222,7 @@ Which is included in the device's main device tree and used like
 this,
 
 
-[**msm8916-mtp-ze550kl.dtsi**]()
+[**msm8916-mtp-ze550kl.dtsi**](https://github.com/antony-jr/postmarketos-asus-z00l/blob/master/charger/msm8916-mtp-ze550kl.dtsi)
 
 ```
 &pm8916_chg {
